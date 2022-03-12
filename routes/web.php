@@ -20,4 +20,5 @@ Route::get('/', function () {
 
 //rutas para el controlador animal
 Route::get('animal', [AnimalController::class, 'index'])->name('animal.index');
-Route::post('animal', [AnimalController::class], 'registrar')->name('animal.registrar');
+Route::post('animal', [AnimalController::class, 'registrar'])->name('animal.registrar');
+Route::delete('animal/aliminar/{id}', [AnimalController::class, 'elimianr'])->name('animal_eliminar');

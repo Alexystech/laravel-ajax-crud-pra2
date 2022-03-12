@@ -108,11 +108,12 @@
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                 <h3>Nuevo animal</h3>
 
-                <form class="registro-animal">
+                <form id="registro-animal">
                     @csrf
                     <div class="form-group">
                         <label for="">Nombre</label>
-                        <input type="text" name="txtNombre" id="txtNombre" class="form-control" aria-describedby="emailHelp">
+                        <input type="text" name="txtNombre" id="txtNombre" class="form-control"
+                            aria-describedby="emailHelp">
                     </div>
 
                     <div class="form-group">
@@ -126,16 +127,38 @@
                     </div>
 
                     <div class="custom-control custom-radio">
-                        <input type="radio" id="rbGeneroMacho" name="rbGenero" value="macho" class="custom-control-input">
+                        <input type="radio" id="rbGeneroMacho" name="rbGenero" value="macho"
+                            class="custom-control-input">
                         <label for="" class="custom-control-label">Macho</label>
                     </div>
                     <div class="custom-control custom-radio">
-                        <input type="radio" id="rbGeneroHembra" name="rbGenero" value="macho" class="custom-control-input">
+                        <input type="radio" id="rbGeneroHembra" name="rbGenero" value="macho"
+                            class="custom-control-input">
                         <label for="" class="custom-control-label">Hembra</label>
                     </div>
 
                     <button type="submit" class="btn btn-primary">Registrar</button>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Confirmación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ¿Desea eliminar el registro seleccionado?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="btnEliminar" name="btnEliminar" class="btn btn-danger">Eliminar</button>
+                </div>
             </div>
         </div>
     </div>
@@ -187,16 +210,49 @@
                     genero: genero,
                     _token: _token
                 },
-                success:function(response) {
+                success: function(response) {
                     if (response) {
                         $('#registro-animal')[0].reset();
-                        toastr.success('El registro se ingreso correctamente', 'nuevo registro', {timeOut:3000});
+                        toastr.success('El registro se ingreso correctamente', 'nuevo registro', {
+                            timeOut: 3000
+                        });
                         $('#tabla-animal').DataTable().ajax.reload();
                     }
                 }
-            })
+            });
         });
     </script>
+
+    <script>
+        var ani_id;
+
+        $(document).on('click', '.delete', function() {
+            ani_id = $(this).attr('id');
+
+            $('#confirmModal').modal('show');
+        });
+
+        $('#btnEliminar').click(function() {
+            $.ajax({
+                url: "animal/eliminar/"+ani_id,
+                beforeSend: function() {
+                    $('#btnEliminar').text('Eliminando...');
+                },
+                success:function(data) {
+                    setTimeout(function () {
+                        $('#confirmModal').modal('hide');
+                        toastr.warning('El registro fue eliminado correctamente', 'eliminar registro', {
+                            timeOut: 3000
+                        });
+                        $('#tabla-animal').DataTable().ajax.reload();
+                    }, 2000);
+                    $('#btnEliminar').text('Eliminar');
+                }
+            });
+        });
+
+    </script>
+
 </body>
 
 </html>

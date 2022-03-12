@@ -20,7 +20,7 @@ class AnimalController extends Controller
             return DataTables::of($animales)
                 ->addColumn('action', function($animales) {
                     $acciones = '<a href="" class="btn btn-info btn-sm"> editar </a>';
-                    $acciones .= '&nbsp;&nbsp;<button type="button" name="delete" id="" class="btn btn-danger btn-sm"> Eliminar </button>';
+                    $acciones .= '&nbsp;&nbsp;<button type="button" name="delete" id="'.$animales->id.'" class="delete btn btn-danger btn-sm"> Eliminar </button>';
                     return $acciones;
             })
             ->rawColumns(['action'])
@@ -31,8 +31,17 @@ class AnimalController extends Controller
     }
 
     public function registrar(Request $request) {
-        $animal = DB::select('call spcre_animal(?,?,?)', [$request->nombre,$request->especie,$request->genero]);
+        $animal = DB::select('call spcre_animal(?,?,?)', [
+            $request->nombre,
+            $request->especie,
+            $request->genero
+        ]);
 
+        return back();
+    }
+
+    public function eliminar($id) {
+        $animal = DB::select('call spdel_animal(?)', [$id]);
         return back();
     }
 }
